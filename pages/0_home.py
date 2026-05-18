@@ -1,7 +1,5 @@
 import streamlit as st
 
-st.image(r"C:\Users\jcuen\OneDrive\Escritorio\CURSOS\DMC\PYTHON FOR ANALYTICS\PROYECTO FINAL\telco_churn_app\assets\telco_logo.png", width=150)
-
 # --- Hero ---
 st.title("📉 Customer Churn")
 st.subheader("Análisis Exploratorio de Datos")
