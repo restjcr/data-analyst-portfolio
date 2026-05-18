@@ -25,13 +25,20 @@ Durante el último periodo, la empresa registró un incremento en su tasa de chu
 ```
 data-analyst-portfolio/
 │
-├── app.py                  # Punto de entrada principal
-├── requirements.txt        # Dependencias del proyecto
-├── README.md               # Este archivo
-├── TelcoCustomerChurn.csv  # Dataset
+├── app.py                      # Punto de entrada principal
+├── requirements.txt            # Dependencias del proyecto
+├── README.md                   # Este archivo
+│
+├── pages/
+│   ├── 0_home.py               # Landing
+│   ├── 1_upload.py             # Carga de archivo plano
+│   └── 2_eda.py                # Análisis Exploratorio de los datos
+│
+├── data/
+│   └── TelcoCustomerChurn.csv  # Dataset
 │
 └── utils/
-    └── analyzer.py         # Clase DataAnalyzer (POO)
+    └── analyzer.py             # Clase DataAnalyzer (POO)
 ```
 
 ---
@@ -112,7 +119,7 @@ En el módulo **"Carga del Dataset"**, sube el archivo `TelcoCustomerChurn.csv` 
 ## 👤 Autor
 
 **José Cuentas Ramirez**  
-Especialización en Python for Analytics — 2025
+Especialización en Python for Analytics — 2026
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Conectar-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/josecuentas/)
 
