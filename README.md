@@ -20,6 +20,16 @@ Durante el último periodo, la empresa registró un incremento en su tasa de chu
 
 ---
 
+## 📸 Screenshots
+
+![Home](screenshots/home.png)
+![Upload Data](screenshots/upload.png)
+![EDA Example 1](screenshots/chart1.png)
+![EDA Example 2](screenshots/chart2.png)
+![Insights](screenshots/insights.png)
+
+---
+
 ## 🗂️ Estructura del Proyecto
 
 ```

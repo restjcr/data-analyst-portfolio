@@ -13,7 +13,9 @@ eda         =   st.Page("pages/2_eda.py", title="EDA", icon="📊")
 
 # Creamos la navegación
 pg = st.navigation(
-    [home, upload, eda]
+    {
+        "Menu":[home, upload, eda]
+    }
 )
 
 # Ejecutamos página seleccionada

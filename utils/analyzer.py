@@ -106,7 +106,8 @@ class DataAnalyzer:
         sns.countplot(
             data=self.df,
             x=column,
-            ax=ax
+            ax=ax,
+            palette="Set2"
         )
 
         ax.set_title(
