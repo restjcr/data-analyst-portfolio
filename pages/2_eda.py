@@ -2,7 +2,7 @@ import streamlit as st
 import plotly.express as px
 from utils.analyzer import DataAnalyzer
 
-st.title("Análisis Exploratorio")
+st.title("📊 Análisis Exploratorio")
 
 # Validamos existencia del dataframe
 if "df" not in st.session_state:
@@ -156,7 +156,7 @@ with tab4:
         )
 
 with tab5:
-    st.subheader("Distribución de variables numéricas")
+    st.subheader("🟢 Distribución de variables numéricas")
 
     show_kde = st.checkbox("Mostrar curva KDE", value=True)
 
@@ -196,7 +196,7 @@ with tab5:
         )
 
 with tab6:
-    st.subheader("Análisis de variables categóricas")
+    st.subheader("🟢 Análisis de variables categóricas")
 
     _, categorical_cols = analyzer.classify_variables()
 
@@ -254,25 +254,34 @@ with tab6:
         )
 
 with tab7:
-    st.subheader("Análisis bivariado (numérico vs categórico)")
+    st.subheader("🟢 Análisis bivariado (numérico vs categórico)")
 
-    numeric_cols, categorical_cols = analyzer.classify_variables()
+    numeric_cols, _ = analyzer.classify_variables()
 
-    col1, col2 = st.columns(2)
+    # col1, col2 = st.columns(2)
 
-    with col1:
-        selected_numeric = st.selectbox(
-            "Variable numérica",
-            numeric_cols,
-            key="tab7_numeric"
-        )
+    # with col1:
+    #     selected_numeric = st.selectbox(
+    #         "Variable numérica",
+    #         numeric_cols,
+    #         key="tab7_numeric"
+    #     )
 
-    with col2:
-        selected_categorical = st.selectbox(
-            "Variable categórica",
-            categorical_cols,
-            key="tab7_categorical"
-        )
+    # with col2:
+    #     selected_categorical = st.selectbox(
+    #         "Variable categórica",
+    #         categorical_cols,
+    #         key="tab7_categorical"
+    #     )
+
+    selected_numeric = st.selectbox(
+        "Variable numérica",
+        numeric_cols,
+        key="tab7_numeric"
+    )
+
+    selected_categorical = "Churn"
+
 
     fig = analyzer.plot_numeric_vs_categorical(
         selected_numeric,
@@ -282,27 +291,36 @@ with tab7:
     st.pyplot(fig)
 
 with tab8:
-    st.subheader("Análisis bivariado (categórico vs categórico)")
+    st.subheader("🟢 Análisis bivariado (categórico vs categórico)")
 
     _, categorical_cols = analyzer.classify_variables()
 
-    col1, col2 = st.columns(2)
+    # col1, col2 = st.columns(2)
 
-    with col1:
-        selected_categorical_1 = st.selectbox(
-            "Variable categórica 1",
-            categorical_cols,
-            index=categorical_cols.index("Contract"),
-            key="tab8_categorical_1"
-        )
+    # with col1:
+    #     selected_categorical_1 = st.selectbox(
+    #         "Variable categórica 1",
+    #         categorical_cols,
+    #         index=categorical_cols.index("Contract"),
+    #         key="tab8_categorical_1"
+    #     )
 
-    with col2:
-        selected_categorical_2 = st.selectbox(
-            "Variable categórica 2",
-            categorical_cols,
-            index=categorical_cols.index("Churn"),
-            key="tab8_categorical_2"
-        )
+    # with col2:
+    #     selected_categorical_2 = st.selectbox(
+    #         "Variable categórica 2",
+    #         categorical_cols,
+    #         index=categorical_cols.index("Churn"),
+    #         key="tab8_categorical_2"
+    #     )
+
+    selected_categorical_1 = st.selectbox(
+        "Variable categórica",
+        categorical_cols,
+        index=categorical_cols.index("Contract"),
+        key="tab8_categorical_1"
+    )
+
+    selected_categorical_2 = "Churn"  
 
     fig = analyzer.plot_categorical_vs_categorical(
         selected_categorical_1,
@@ -404,7 +422,7 @@ with tab8:
 #         st.pyplot(fig)
 
 with tab9:
-    st.subheader("Análisis basado en parámetros seleccionados")
+    st.subheader("🟢 Análisis basado en parámetros seleccionados")
 
     numeric_cols, categorical_cols = analyzer.classify_variables()
 
@@ -470,14 +488,48 @@ with tab9:
         st.plotly_chart(fig, use_container_width=True)
 
 with tab10:
-    st.subheader("Insights")
+    st.subheader("🟢 Insights")
     st.markdown("Variables con mayor influencia en la fuga de clientes (Churn)")
 
-    # --- Hallazgo 1: Contract ---
+    # # --- Hallazgo 1: Contract ---
+    # st.markdown("### 1. Tipo de Contrato")
+    # fig1 = analyzer.plot_categorical_vs_categorical_plotly("Contract", "Churn")
+    # st.plotly_chart(fig1, use_container_width=True, key="tab10_insight_1")
+    # st.info("💡 **Hallazgo 1:** ...")
+
     st.markdown("### 1. Tipo de Contrato")
-    fig1 = analyzer.plot_categorical_vs_categorical_plotly("Contract", "Churn")
+
+    churn_contract = (
+        df.groupby("Contract")["Churn"]
+        .value_counts(normalize=True)
+        .mul(100)
+        .round(1)
+        .reset_index(name="Porcentaje")
+    )
+
+    fig1 = px.bar(
+        churn_contract,
+        x="Porcentaje",
+        y="Contract",
+        color="Churn",
+        barmode="group",
+        orientation="h",
+        text="Porcentaje",
+        title="Tasa de Churn (%) por Tipo de Contrato",
+        template="plotly_white",
+        color_discrete_sequence=px.colors.qualitative.Set2,
+        category_orders={
+            "Contract": ["Month-to-month", "One year", "Two year"]
+        }        
+    )
+
+    fig1.update_traces(texttemplate="%{text}%", textposition="outside")
+
     st.plotly_chart(fig1, use_container_width=True, key="tab10_insight_1")
-    st.info("💡 **Hallazgo 1:** ...")
+    st.info("💡 **Hallazgo 1:** Los clientes con contrato mes a mes tienen un churn de (42.7%) respecto al total de la base de esta categoría. " \
+    "Se distancia notablemente de los ratios de churn de los contratos de un año (11.3%) y más aún de los de dos años (2.8%). Esto puede estar asociado a " \
+    "que los contratos de más de un mes pueden presentar descuentos, y que los clientes reconocen que abandonar este contrato les puede " \
+    "hacer perder este beneficio en caso quieran volver a contratar el servicio.")
 
     # --- Hallazgo 2: tenure ---
     st.markdown("### 2. Tiempo de Permanencia")
@@ -491,7 +543,9 @@ with tab10:
         template="plotly_white"
     )
     st.plotly_chart(fig2, use_container_width=True, key="tab10_insight_2")
-    st.info("💡 **Hallazgo 2:** ...")
+    st.info("💡 **Hallazgo 2:** Clientes con más antigüedad tienden a realizar menos solicitudes de cancelación respecto a los que recien inician en la " \
+    "compañía. (380) clientes cancelaron el servicio en el primer mes de contrato. Resulta crucial realizar una auditoría sobre los asesores de venta y revisar principalmente " \
+    "la calidad del ofrecimiento. Incluso, se pueden iniciar campañas de penalización monetaria para aquellas contratas que venden 'humo' o engañan al cliente.")
 
     # --- Hallazgo 3: MonthlyCharges ---
     st.markdown("### 3. Cargo Mensual")
@@ -504,16 +558,76 @@ with tab10:
         template="plotly_white"
     )
     st.plotly_chart(fig3, use_container_width=True, key="tab10_insight_3")
-    st.info("💡 **Hallazgo 3:** ...")
+    st.info("💡 **Hallazgo 3:** Los clientes que fugaron de la empresa tienen una mayor mediana (79.65) del costo mensual respecto a los que no fugaron (64.45). Implica que es " \
+    "muy probable que hayan contratado un paquete con agregados pero que finalmente no utilizaron mucho y ya no querían continuar pagando por algo que no van a utilizar. Ofrecer un " \
+    "producto de acuerdo a las necesidades del cliente es crucial para evitar el early churn. Además se pueden hacer campañas proactivas para " \
+    "realizar un downgrade plan más descuento y mantener al cliente con su servicio.")
 
     # --- Hallazgo 4: InternetService ---
+    # st.markdown("### 4. Tipo de Servicio de Internet")
+    # fig4 = analyzer.plot_categorical_vs_categorical_plotly("InternetService", "Churn")
+    # st.plotly_chart(fig4, use_container_width=True, key="tab10_insight_4")
+    # st.info("💡 **Hallazgo 4:** ...")
+    # --- Hallazgo 4: InternetService ---
+
     st.markdown("### 4. Tipo de Servicio de Internet")
-    fig4 = analyzer.plot_categorical_vs_categorical_plotly("InternetService", "Churn")
-    st.plotly_chart(fig4, use_container_width=True, key="tab10_insight_4")
-    st.info("💡 **Hallazgo 4:** ...")
+
+    internet_types = df["InternetService"].unique()
+
+    cols = st.columns(len(internet_types))
+
+    for i, service in enumerate(internet_types):
+        with cols[i]:
+            subset = df[df["InternetService"] == service]
+            churn_counts = subset["Churn"].value_counts()
+
+            fig = px.pie(
+                values=churn_counts.values,
+                names=churn_counts.index,
+                title=f"{service}",
+                hole=0.4,
+                template="plotly_white",
+                color_discrete_sequence=px.colors.qualitative.Set2
+            )
+
+            st.plotly_chart(fig, use_container_width=True, key=f"tab10_pie_{service}")
+
+    st.info("💡 **Hallazgo 4:** Los clientes con el tipo de tecnología fibra óptica tienen un churn por encima de los (41%), lo que está ligado puramente a que los clientes" \
+    " pensaban que iban a tener más estabilidad y velocidad por un precio más alto pero que lamentablemente no cumplió lo esperado. Por otra parte la tecnología" \
+    " DSL se ve más estable con un churn de (19%), lo que puede estar asociado también a la antigüedad de los clientes. Normalmente a los nuevos" \
+    " se le ofrece la fibra óptica, pero ya vimos que el early churn en este caso de estudio es alto.")
+
+    # --- Hallazgo 5: TechSupport ---
+    # st.markdown("### 5. Soporte Técnico")
+    # fig5 = analyzer.plot_categorical_vs_categorical_plotly("TechSupport", "Churn")
+    # st.plotly_chart(fig5, use_container_width=True, key="tab10_insight_5")
+    # st.info("💡 **Hallazgo 5:** ...")
 
     # --- Hallazgo 5: TechSupport ---
     st.markdown("### 5. Soporte Técnico")
-    fig5 = analyzer.plot_categorical_vs_categorical_plotly("TechSupport", "Churn")
+
+    churn_rate = (
+        df.groupby("TechSupport")["Churn"]
+        .value_counts(normalize=True)
+        .mul(100)
+        .round(1)
+        .reset_index(name="Porcentaje")
+    )
+
+    fig5 = px.bar(
+        churn_rate,
+        x="TechSupport",
+        y="Porcentaje",
+        color="Churn",
+        barmode="group",
+        text="Porcentaje",
+        title="Tasa de Churn (%) por Soporte Técnico",
+        template="plotly_white",
+        color_discrete_sequence=px.colors.qualitative.Set2
+    )
+
+    fig5.update_traces(texttemplate="%{text}%", textposition="outside")
+
     st.plotly_chart(fig5, use_container_width=True, key="tab10_insight_5")
-    st.info("💡 **Hallazgo 5:** ...")
+    st.info("💡 **Hallazgo 5:** Los clientes sin servicio de soporte técnico tienen un churn de (41.6%) respecto a los clientes que sí lo tienen (15.2%), viendose " \
+    "lo valioso que representa la venta del soporte técnico. Con algún descuento promocional de entrada puede servir como una herramienta de fidelización importante para la empresa.")

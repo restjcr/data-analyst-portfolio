@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-st.title("Carga del Dataset")
+st.title("⬆️ Carga del Dataset")
 
 uploaded_file = st.file_uploader(
     "Sube el CSV",
@@ -37,13 +37,35 @@ if uploaded_file is not None:
 if "df" in st.session_state:
 
     df = st.session_state["df"]
+    
+    st.subheader("Acciones realizadas: ")
 
-    st.dataframe(df.head())
+    st.markdown("""
+    <div style='display: flex; gap: 1rem; margin: 1rem 0;'>
+        <div style='flex: 1; background-color: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; padding: 0.8rem 1rem;'>
+            🧹 <b>Limpieza de registros</b><br>
+            <span style='font-size: 0.9em; color: #333;'>Se eliminaron 11 filas con valores nulos en <b>TotalCharges</b></span>
+        </div>
+        <div style='flex: 1; background-color: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; padding: 0.8rem 1rem;'>
+            🗑️ <b>Columna descartada</b><br>
+            <span style='font-size: 0.9em; color: #333;'>Se eliminó <b>customerID</b> por no aportar valor analítico</span>
+        </div>
+        <div style='flex: 1; background-color: #d4edda; border-left: 4px solid #28a745; border-radius: 8px; padding: 0.8rem 1rem;'>
+            🔄 <b>Transformación de variable</b><br>
+            <span style='font-size: 0.9em; color: #333;'><b>SeniorCitizen</b> convertida de 0/1 a No/Yes para mayor claridad</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    st.subheader("Muestra del dataset resultante: ")
 
-    col1.metric("Filas", df.shape[0])
-    col2.metric("Columnas", df.shape[1])
+    st.dataframe(df.head(10))
+
+    col1, col2, col3 = st.columns(3)
+
+    col1.metric("📋 Filas", df.shape[0])
+    col2.metric("📊 Columnas", df.shape[1])
+    col3.metric("🎯 Variable Objetivo", "Churn")
 
 else:
 
